@@ -1,5 +1,19 @@
 # POLISH
 
+## Building and Installing
+
+To build, run `make` in the main directory.
+
+If debugging versions of both the virtual machine and the compiler are desired, instead run `make debug`.
+
+If on Linux, run `make install` as root to copy `polish` and `polishc` to `/usr/local/bin`. If on Windows, copy them from `bin/...` to wherever you like, and ensure they are in the `$PATH` variable. Or just don't bother, and invoke the compiler and virtual machine with their required paths.
+
+## Basic usage
+
+If you have a text file `input.pole` with polish source code, run `polishc input.pole`, and a file with polish byte code will be created with the name `input.pbc`. For a different output file name, run `polishc input.pole output.pbc`. To read polish source code from standard in, run `polishc -` or `polishc - output.pbc`; in the first case the compiled byte code will go to standard out.
+
+If you have a compiled polish byte code file `file.pbc`, you may run it with `polish file.pbc`.
+
 ## Examples
 
 `"Hello, World!\n" out sputf end`
