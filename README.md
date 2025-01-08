@@ -20,11 +20,26 @@ end`
 ## Description
 
 A low-level stack-based programming language which is compiled to bytecode
-to be executed by a virtual machine. The language is very weakly typed,
+to be executed by a virtual machine.
+
+The language is very weakly typed,
 with different types simply corresponding to different ways to interpret
 raw bytes on the stack or different ways to put data onto the stack.
 
-There are 5 or 6 primitive data types of fixed size which can occupy the stack
+The virtual machine has a stack and an 8-byte register used by the operations `Xund`.
+Files and memory are treated congruently;
+memory may be dynamically allocated and freed via `opn` and `cls`,
+files can be opened and closed via `opnf` and `clsf`, and
+transfering data to/from the stack to memory or a file is done using the `Xput[f]`
+and `Xget[f]`.
+
+`in`, `out`, `err` provide handles to standard in, out, and err.
+
+Strings can be formatted with `sfmt` or scanned for data with `sscn`.
+Numbers in arbitrary bases between 1 and 20 are understood by the compiler
+in source code and by the VM in `sfmt` and `sscn` operations.
+
+There are 5 primitive data types of fixed size which can occupy the stack
 and be operated on directly.
 
 Here they are with their names (bold), prefixes, and size (in bytes):
@@ -33,12 +48,9 @@ Here they are with their names (bold), prefixes, and size (in bytes):
 * **integer** I 4,
 * **long integer** L 8,
 * **string** S [arbitrary size],
-* and maybe **pointer** [no prefix] 8,
-
-all of which may occupy the stack directly and may be operated on directly.
 
 At this point the machine and compiler assume pointers fit in 8 bytes,
-and the *pointer* type may be considered to be simply an alias for long.
+and so operations which requite a pointer consume a long's worth of data from the stack.
 
 ## POLISH SOURCE CODE
 
@@ -59,10 +71,12 @@ match is found, the compiler will complain and it will be skipped.
 If the first character is `:`, the token ends at the first non-alphanumeric,
 non-underscore character, and is interpreted as a label definition.
 The compiler will then remember the name of the label
-(the characters following the `:` and in the token) and the label's position.
+(the characters of the token not including the initial `:`) and the label's position.
+If a label is redefined, the compiler emits an error.
 
 If the first character is `@`, the token ends at the first non-alphanumeric,
 non-underscore character, and is interpreted as a jump to a label.
+If the requested label has not yet been defined, the compiler emits and error.
 The sequence `? @label` is compiled as if `#L[label] lund ? jmp ldrp`
 were written, where `[label]` is the numeric program pointer
 value stored by the label; otherwise it is compiled as `#[label] jmp`.
@@ -76,12 +90,13 @@ character, and will be interpreted by the compiler as a numeric literal of the
 default size (integer, 4 bytes) in base 10.
 
 If the first character is `#`, the token ends on the next non-alphanumeric
-character, and will be interpreted as a numeric literal of a size and in a base
-specified by a series of alphabetic characters immediately following the `#`:
-the **format string**. This format string consists of 1 or 2 characters.
+character, and will be interpreted as a numeric literal.
+The first 1 or 2 characters following the `#` are the **format string**,
+and specify the size of the numeric literal in bytes and the base in which it is written.
 If one of the characters `cCrRiIlL`
-(the numeric type prefixes) is encountered, the format string is assumed to
-have ended, and the following alphanumeric characters will be parsed as a number.
+(the numeric type prefixes) is encountered in the format string,
+the format string is assumed to have ended,
+and the remaining alphanumeric characters of the token will be parsed as a number.
 If one of the characters `ubtqphsond`, their capital versions, or the character
 `v` is encountered, the compiler uses a different base to parse the characters
 following the format string:
