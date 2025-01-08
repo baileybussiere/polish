@@ -125,6 +125,7 @@ following the format string:
 * **n**onary (base 9, `012345678`)
 * **d**ecimal (base 10, `0123456789`)
 * **v**igesimal (base 20, `0123456789aAbBcCdDeEfFgGhHiIjJ`),
+
 where capital versions of the first 10 of these correspond to a base 10 higher, for example **q**uaternary (4) -> **Q**uattordecimal (14).
 All the alphanumeric characters following the format string are the **numeric string**,
 whose characters are interpreted as a series of digits.
@@ -133,6 +134,8 @@ encountered in the numeric string an error is thrown.
 Unary uses the character `1`; bases B for 2 <= B <= 10 use ascii
 digits 0 through B - 1; bases 10 < B <= 20 use the ascii digits as
 well as the first B - 10 letters of the english alphabet.
+The numeric string may freely mix different cases of the alphabetic
+digits, they have no difference in meaning.
 
 If the token begins with any other character, it is one character long,
 and is interpreted as an operation. If the character is in `+ - * / ~ .`,
