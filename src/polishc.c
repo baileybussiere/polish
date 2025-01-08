@@ -112,12 +112,14 @@ int compile(FILE *in_file, FILE *out_file) {
 			if( cond ) {
 				if( (err = write_instr(out_file, T_LUND)) ) return err;
 				if( (err = write_instr(out_file, '?')) ) return err;
-				prog_p++; cond = 0;
+				if( (err = write_instr(out_file, T_JMP)) ) return err;
+				if( (err = write_instr(out_file, T_LDRP)) ) return err;
+				prog_p += 4; cond = 0;
 			}
-			if( (err = write_instr(out_file, T_JMP)) ) return err;
-			prog_p++;
-			if( (err = write_instr(out_file, T_LDRP)) ) return err;
-			prog_p++;
+			else {
+				if( (err = write_instr(out_file, T_JMP)) ) return err;
+				prog_p++;
+			}
 			break;
 		  case '?':
 			cond = 1;
