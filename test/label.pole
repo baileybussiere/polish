@@ -1,0 +1,7 @@
+0 1 #l2
+:start
+lund ldup lund + linc
+#l10 lcmp
+? @start
+ldrp "%i\n" sfmt out sputf
+end
